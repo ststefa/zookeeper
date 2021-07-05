@@ -31,7 +31,7 @@ language = {
 }
 
 
-def ZooException(Exception):
+class ZookeeperException(BaseException):
     pass
 
 
@@ -71,13 +71,21 @@ def lookup(animal):
     if animal in language['animals']:
         id = add_thread(animal)
     else:
-        raise ZooException(f'No such animal: {animal}')
+        return f'No such animal: {animal}', 400
+
+
+@app.route('/list')
+def list_threads():
+    return ", ".join(threads.keys())
 
 
 @app.route('/query/<uuid:id>')
 def show_thread_state(id):
     return f'id {id}'
 
+@app.errorhandler(404)
+def not_found(error):
+    return render_template('error.html'), 404
 
 if __name__ == "__main__":
     read_config()

@@ -44,3 +44,20 @@ Make sure you already set up the runtime requirements. To run test cases
 Run the tests
 
     `pytest -v`
+
+## Simplification
+
+For the sake of brevity, the implementation makes several simplifications which would probably be considered indispensable for a real world application:
+
+- Threads are managed in a simple dictionary. A real implementation would implement some kind of thread management which allows for more control and observability of the runtime state
+
+- The use of `threading` is not appropriate for compute-bound activities due to Pythons Global Interpreter Lock (GIL).
+
+- There is no persistence
+
+- Logging would be pimped. Also, overall configurability would be increased (e.g. server port)
+
+- Security is deemed irrelevant for this example. In a real-world implementation this would probably be added best by e.g.
+
+  - Some kind of clever code annotations
+  - Outsourced entirely to the embedding system, e.g. the invoking webserver
