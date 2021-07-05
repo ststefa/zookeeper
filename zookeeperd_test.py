@@ -3,7 +3,7 @@
 import pytest
 import requests
 
-import zookeeperd
+from zookeeperd import create_app
 
 #def server():
 #    print('*****SETUP*****')
@@ -13,8 +13,8 @@ import zookeeperd
 #    print('******TEARDOWN******')
 #    db.close()
 
-@pytest.fixture(scope='module')
-def testling():
+@pytest.fixture #(scope='module')
+def app():
     testling = zookeeperd.app
     return testling
 

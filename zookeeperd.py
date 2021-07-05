@@ -12,11 +12,13 @@ from werkzeug.exceptions import HTTPException
 
 # Simplistic logging
 import logging
+
 logging.getLogger().setLevel(logging.DEBUG)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 app = flask.Flask(__name__)
+
 
 # Where we keep our threads. A real world implementation would probably use a
 # more sophisticated approach
@@ -36,6 +38,7 @@ class ZookeeperException(HTTPException):
     """
     pass
 
+
 def read_config():
     """ Simplistic config file input without content verification. The filename
         is hardcoded "zookeeper.conf". It has to have sections for every
@@ -49,14 +52,16 @@ def read_config():
             language[block].append(key)
     logger.info(f'language: {language}')
 
+
 def build_status(animal) -> str:
     """ Create the "status" of the animals by randomly building a sentence with
         fixed assembly logic "adjective animal verb adverb"
     """
-    adjective=random.choice(language['adjectives']).capitalize()
-    verb=random.choice(language['verbs'])
-    adverb=random.choice(language['adverbs'])
+    adjective = random.choice(language['adjectives']).capitalize()
+    verb = random.choice(language['verbs'])
+    adverb = random.choice(language['adverbs'])
     return f'{adjective} {animal} {verb} {adverb}'
+
 
 def worker(id: uuid.UUID, animal: str):
     """ The thread emulating the workload. It randomly waits for 10-20 seconds
@@ -69,18 +74,19 @@ def worker(id: uuid.UUID, animal: str):
     return
 
 
-def add_thread(animal) -> str:
+def add_thread(animal) -> uuid.UUID:
     """ Create a new worker thread and add it to the global threads
         dictionary
     """
+    # see https://docs.python.org/3/library/uuid.html for variations
     new_uuid = uuid.uuid4()
     thread = threading.Thread(target=worker, args=(new_uuid, animal))
     threads[new_uuid] = thread
     thread.start()
-    return str(new_uuid)
+    return new_uuid
 
 
-@app.errorhandler(Exception)
+@app.errorhandler(ZookeeperException)
 def handle_exception(e):
     """ Allows the use of regular exceptions in the code by writing it to this
         process' log as well as returning it as a HTTP response
@@ -93,17 +99,18 @@ def handle_exception(e):
 def get_animals():
     """ Get a list of animals in the zoo. Any animal can be queried
     """
-    return ", ".join(language['animals'])
+    return flask.jsonify(language['animals'])
+
 
 @app.route('/animals/<string:animal>')
-def animals(animal):
+def query_status(animal):
     """ Start a status query for an animal
     """
     if animal in language['animals']:
         id = add_thread(animal)
-        return id
+        return flask.jsonify(str(id))
     else:
-        raise ZookeeperException(f'No such animal: {animal}')
+        raise ZookeeperException(f'No such animal: "{animal}"')
 
 
 @app.route('/query/<uuid:id>')
@@ -112,11 +119,11 @@ def show_thread_state(id):
         by "..."
     """
     if id not in threads.keys():
-        raise ZookeeperException(f'No query with id {id}')
+        raise ZookeeperException(f'No query with id "{id}"')
     if isinstance(threads[id], threading.Thread):
-        return '...'
+        return flask.jsonify('...')
     else:
-        return threads[id]
+        return flask.jsonify(threads[id])
 
 
 if __name__ == "__main__":
