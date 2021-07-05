@@ -1,40 +1,52 @@
 #!/usr/bin/env python3
 
+import configparser
+
 import threading
 import uuid
+import time
+import random
 
 from flask import Flask, escape, request
 
 app = Flask(__name__)
 
-threads={}
+threads = {}
+
+config = configparser.ConfigParser(allow_no_value=True)
+config.read('zookeeper.conf')
 
 def worker():
-    """thread worker function"""
-    print 'Worker'
+    print('start')
+    time.sleep(random.randrange(10, 20))
+    print('end')
     return
 
-def add_thread() -> uuid.uuid:
-    pass
 
-threads = []
-for i in range(5):
+def add_thread(animal) -> uuid.UUID:
     t = threading.Thread(target=worker)
-    threads.append(t)
+    new_uuid=uuid.UUID()
+    threads[new_uuid]=t
     t.start()
+    return new_uuid
+
 
 @app.route("/ping")
 def ping():
     name = request.args.get("name", "World")
     return f"pong {escape(name)}"
 
-@app.route('/lookup/<string:animal>')
-def show_thread_state(tid):
-    return f'tid {tid}'
 
-@app.route('/list/<uuid:tid>')
-def show_thread_state(tid):
-    return f'tid {tid}'
+@app.route('/lookup/<string:animal>')
+def lookup(animal):
+    if animal in config.animals:
+        id=add_thread(animal)
+
+
+@app.route('/query/<uuid:id>')
+def show_thread_state(id):
+    return f'id {id}'
+
 
 if __name__ == "__main__":
     app.run()
