@@ -20,12 +20,27 @@ Genauso wichtig wie das lauffähige Programm ist die Dokumentation (readme und c
 
 ## Install
 
-python3 -m venv venv
-. venv/bin/activate
+- (recommended) Create a python virtual environment for better separation:
+
+      python3 -m venv venv
+      . venv/bin/activate
+
+- Install required python dependencies
+
+      pip3 install -r requirements.txt
 
 ## Tests
 
-Simple unit tests as well as algorithm-correctness tests are performed using pytest. To run
+Make sure you already set up the runtime requirements. To run test cases
 
-  1. `pip install pytest`
-  1. `pytest -v`
+- (recommended) Activate the python virtual environment (see above)
+
+      . venv/bin/activate
+
+- Install additional python development-time dependencies
+
+      pip3 install -r requirements-dev.txt
+
+Run the tests
+
+    `pytest -v`
