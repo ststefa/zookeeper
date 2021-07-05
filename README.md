@@ -49,19 +49,21 @@ Run the tests
 
 For the sake of brevity, the implementation makes several simplifications which would probably be considered indispensable for a real world application:
 
-- Threads are managed in a simple dictionary. A real implementation would implement some kind of thread management which allows for more control and observability of the runtime state
+- Threads are "managed" in a simple dictionary. A real implementation would implement some kind of thread management which allows for more control and observability of the runtime state.
 
-- The use of `threading` is not appropriate for compute-bound activities due to Pythons Global Interpreter Lock (GIL).
+- The use of `threading` would not be appropriate for compute-bound activities due to Pythons Global Interpreter Lock (GIL).
 
-- There is no persistence
+- There is no persistence.
 
-- Logging would be pimped. Also, overall configurability would be increased (e.g. server port)
+- Logging would be pimped. Also, overall configurability (e.g. server port, config file) would be improved using argparse.
 
 - Security is deemed irrelevant for this example. In a real-world implementation this would probably be added best by e.g.
 
-  - Some kind of clever code annotations
-  - Outsourced entirely to the embedding system, e.g. the invoking webserver
+  - Some kind of clever additional flask annotations (very likely such exists already)
+  - Outsourcing the topic entirely to the embedding system, e.g. the invoking webserver which would act as a reverse proxy
 
-- JSON structures would be used for HTTP responses
+- JSON structures would be used for HTTP responses consequently.
 
-- Timing information would be added in several places
+- Timing information would be added in several places.
+
+- The wording of the implemented "REST API" did not receive much consideration time. I would usually consider this wording an important subject to spend a lot of time and discussion on with the goal to make it intuitive to use.
