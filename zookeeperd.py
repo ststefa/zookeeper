@@ -12,10 +12,8 @@ from werkzeug.exceptions import HTTPException
 
 # Simplistic logging
 import logging
-
 logging.getLogger().setLevel(logging.DEBUG)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 app = flask.Flask(__name__)
 
