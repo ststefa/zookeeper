@@ -62,7 +62,7 @@ Make sure you already set up the runtime requirements. To run test cases
 
 Run the tests
 
-    `pytest`
+    pytest
 
 ### Implementation
 
@@ -73,6 +73,14 @@ This implements a fictive "zookeeper service". It consists of a configurable lis
 The purpose is to simulate an asynchronuous (aka non-blocking) processing of a workload. Animals can be listed - which returns information about available animals - and queried - which returns an approximation of their current status. Note that any query will result in a discrete status, even when invoked for the same animal multiple times.
 
 #### Usage
+
+The implementation runs as a foreground server process and is invoked by
+
+    ./zookeper.py
+
+There are not arguments. There is also no separate logfile, everything is written to regular unixen streams.
+
+The endpoints of the service can be invoked by `curl` or any other HTTP request generator.
 
 The "API" implements the following endpoints
 
