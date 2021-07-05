@@ -22,6 +22,7 @@ app = flask.Flask(__name__)
 # more sophisticated approach
 threads = {}
 
+# The "language" by which we compute the status
 language = {
     'animals': [],
     'verbs': [],
@@ -109,7 +110,7 @@ def query_status(animal):
         id = add_thread(animal)
         return flask.jsonify(str(id))
     else:
-        raise ZookeeperException(f'No such animal: "{animal}"')
+        raise ZookeeperException(f'No such animal: {animal}')
 
 
 @app.route('/query/<uuid:id>')
@@ -118,7 +119,7 @@ def show_thread_state(id):
         by "..."
     """
     if id not in threads.keys():
-        raise ZookeeperException(f'No query with id "{id}"')
+        raise ZookeeperException(f'No query with id {id}')
     if isinstance(threads[id], threading.Thread):
         return flask.jsonify('...')
     else:
