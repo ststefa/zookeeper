@@ -3,7 +3,7 @@
 import pytest
 import requests
 
-from zookeeperd import create_app
+import zookeeperd
 
 #def server():
 #    print('*****SETUP*****')
@@ -14,11 +14,22 @@ from zookeeperd import create_app
 #    db.close()
 
 @pytest.fixture #(scope='module')
-def app():
+def testling():
     testling = zookeeperd.app
     return testling
 
-def request_test(testling):
+def language_test():
+    for item in ["animals", "verbs", "adjectives", "adverbs"]:
+        assert item in zookeeperd.language.keys()
+
+def config_test():
+    zookeeperd.read_config()
+    for item in ["animals", "verbs", "adjectives", "adverbs"]:
+        assert len(zookeeperd.language[item]) > 5
+
+
+
+def request_testa(testling):
     ### test plain invocation ###
     #assert tuple._overlaps((1, 1), (1, 1)) == True
     res = requests.get('https://localhost:5000')

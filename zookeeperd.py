@@ -65,7 +65,8 @@ def build_status(animal) -> str:
 
 def worker(id: uuid.UUID, animal: str):
     """ The thread emulating the workload. It randomly waits for 10-20 seconds
-        and then fills the threads value with the animals status
+        and then assigns the animals status as the threads value. This
+        also eliminates the reference to the thread
     """
     logger.debug('thread start')
     time.sleep(random.randrange(10, 20))

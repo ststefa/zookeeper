@@ -67,3 +67,5 @@ For the sake of brevity, the implementation makes several simplifications which 
 - Timing information would be added in several places.
 
 - The wording of the implemented "REST API" did not receive much consideration time. I would usually consider this wording an important subject to spend a lot of time and discussion on with the goal to make it intuitive to use.
+
+- Proper HTTP response code handling is not implemented
