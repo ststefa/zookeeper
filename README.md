@@ -61,3 +61,9 @@ For the sake of brevity, the implementation makes several simplifications which 
 
   - Some kind of clever code annotations
   - Outsourced entirely to the embedding system, e.g. the invoking webserver
+
+- JSON structures would be used for HTTP responses
+
+- Timing information would be added in several places
+
+- I am pretty sure that a more clever way to return error conditions over HTTP does exist based on exception handling. However, for the time being, I used a less nice "error()" approach. The nonworking but promising exception-based approach is left as comments for future improvement.

@@ -7,10 +7,7 @@ import uuid
 import time
 import random
 
-from typing import Dict
-
-from flask import Flask, escape, request
-
+import flask
 from werkzeug.exceptions import HTTPException
 
 import logging
@@ -19,7 +16,7 @@ logging.basicConfig()
 logging.getLogger().setLevel(logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__)
+app = flask.Flask(__name__)
 
 # Where we keep our threads. A real world implementation would probably use a
 # more sophisticated approach
@@ -33,7 +30,7 @@ language = {
 }
 
 
-class ZookeeperException(BaseException):
+class ZookeeperException(HTTPException):
     pass
 
 
@@ -69,16 +66,11 @@ def add_thread(animal) -> uuid.UUID:
 
 @app.errorhandler(Exception)
 def handle_exception(e):
+    #return "ERR"
     if isinstance(e, HTTPException):
         return e
     else:
         return str(e), 500
-
-
-@app.route("/ping")
-def ping():
-    name = request.args.get("name", "you")
-    return f"pong {escape(name)}"
 
 
 @app.route('/lookup/<string:animal>')
@@ -87,7 +79,8 @@ def lookup(animal):
         id = add_thread(animal)
         return id
     else:
-        return error(f'No such animal: {animal}')
+        raise ZookeeperException(f'No such animal: {animal}')
+        #return error(f'No such animal: {animal}')
 
 
 @app.route('/list')
