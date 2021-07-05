@@ -33,7 +33,7 @@ Genauso wichtig wie das lauffähige Programm ist die Dokumentation (readme und c
 
 ## Notes
 
-See MakingOg.md for additional thoughts on the exercise (german)
+See <MakingOf.md> for additional thoughts on the exercise (german)
 
 ## Solution
 
