@@ -2,7 +2,7 @@
 
 <!-- TOC depthfrom:2 depthto:4 -->
 
-- [Aufgabse](#aufgabse)
+- [Aufgabe](#aufgabe)
 - [Rahmenbedingungen](#rahmenbedingungen)
 - [Notes](#notes)
 - [Solution](#solution)
@@ -107,22 +107,27 @@ This shows an example use of the zookeeper service. Some output has been omitted
 $ ./zookeeperd.py &
 [1] 76104
 
-$ zkc() { curl http://localhost:5000${1} ; }
+$ zkc() { date ; curl http://localhost:5000${1} ; }
 
 $ zkc /animals
+Mon Jul  5 22:35:20 CEST 2021
 ["aardvarks","alpacas","bisons","crocodiles","elks","gorillas","hippos","koalas","kangaroos","lions","pandas","tigers","unicorns","zebras"]
 
-$ zkc /animals/hippos
-"424d60a6-f21a-4089-b828-23d123a62565"
+$ zkc /animals/bisons
+Mon Jul  5 22:35:23 CEST 2021
+"49a0facd-20ea-4c2c-8bd7-5c2527c078c0"
 
-$ zkc /query/424d60a6-f21a-4089-b828-23d123a62565
+$ zkc /query/49a0facd-20ea-4c2c-8bd7-5c2527c078c0
+Mon Jul  5 22:35:33 CEST 2021
 "..."
 
-$ zkc /query/424d60a6-f21a-4089-b828-23d123a62565
+$ zkc /query/49a0facd-20ea-4c2c-8bd7-5c2527c078c0
+Mon Jul  5 22:35:40 CEST 2021
 "..."
 
-$ zkc /query/424d60a6-f21a-4089-b828-23d123a62565
-"Sleepy hippos eat wildly"
+$ zkc /query/49a0facd-20ea-4c2c-8bd7-5c2527c078c0
+Mon Jul  5 22:35:44 CEST 2021
+"Thirsty bisons sing carefully"
 ```
 
 ### Simplifications
