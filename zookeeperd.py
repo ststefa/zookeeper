@@ -42,56 +42,51 @@ def read_config():
             language[block].append(key)
     logger.info(f'language: {language}')
 
-
-def error(message: str):
-    logger.error(message)
-    return message
-
+def build_status(animal) -> str:
+    adjective=random.choice(language['adjectives']).capitalize()
+    verb=random.choice(language['verbs'])
+    adverb=random.choice(language['adverbs'])
+    return f'{adjective} {animal} {verb} {adverb}'
 
 def worker(id: uuid.UUID, animal: str):
     logger.debug('thread start')
     time.sleep(random.randrange(10, 20))
-    threads[id] = animal
+    threads[id] = build_status(animal)
     logger.debug('thread end')
     return
 
 
-def add_thread(animal) -> uuid.UUID:
-    new_uuid = uuid.UUID()
-    t = threading.Thread(target=worker, args=(new_uuid, animal))
-    threads[new_uuid] = t
-    t.start()
-    return new_uuid
+def add_thread(animal) -> str:
+    new_uuid = uuid.uuid4()
+    thread = threading.Thread(target=worker, args=(new_uuid, animal))
+    threads[new_uuid] = thread
+    thread.start()
+    return str(new_uuid)
 
 
 @app.errorhandler(Exception)
 def handle_exception(e):
-    #return "ERR"
-    if isinstance(e, HTTPException):
-        return e
-    else:
-        return str(e), 500
+    logger.exception(e)
+    return str(e), 500
 
 
-@app.route('/lookup/<string:animal>')
-def lookup(animal):
+@app.route('/animals')
+def get_animals():
+    return ", ".join(language['animals'])
+
+@app.route('/animals/<string:animal>')
+def animals(animal):
     if animal in language['animals']:
         id = add_thread(animal)
         return id
     else:
         raise ZookeeperException(f'No such animal: {animal}')
-        #return error(f'No such animal: {animal}')
-
-
-@app.route('/list')
-def list_threads():
-    return ", ".join(threads.keys())
 
 
 @app.route('/query/<uuid:id>')
 def show_thread_state(id):
     if id not in threads.keys():
-        return error(f'No such thread: {id}')
+        raise ZookeeperException(f'No query with id {id}')
     if isinstance(threads[id], threading.Thread):
         return '...'
     else:
