@@ -4,12 +4,12 @@
 
 - [Aufgabe](#aufgabe)
 - [Rahmenbedingungen](#rahmenbedingungen)
-- [Installation](#installation)
-- [Tests](#tests)
-- [Implementation](#implementation)
-  - [Overview](#overview)
-  - [Usage](#usage)
-- [Simplification](#simplification)
+- [Notes](#notes)
+- [Solution](#solution)
+  - [Installation](#installation)
+  - [Tests](#tests)
+  - [Implementation](#implementation)
+  - [Simplifications](#simplifications)
 
 <!-- /TOC -->
 
@@ -31,7 +31,13 @@ Zur Abnahme sollte eine kurze Erklärung der eingesetzten Tools, die oberflächl
 
 Genauso wichtig wie das lauffähige Programm ist die Dokumentation (readme und code comments) der Lösungsidee und der einzelnen Programmteile und Tests. Das Hauptziel ist es, dass wir erleben, wie Sie Software in einem professionellen Umfeld entwickeln. Die gesamte Bearbeitungsdauer sollte max. 1-2 Stunden sein.
 
-## Installation
+## Notes
+
+See MakingOg.md for additional thoughts on the exercise (german)
+
+## Solution
+
+### Installation
 
 - (recommended) Create a python virtual environment for better separation:
 
@@ -42,7 +48,7 @@ Genauso wichtig wie das lauffähige Programm ist die Dokumentation (readme und c
 
       pip3 install -r requirements.txt
 
-## Tests
+### Tests
 
 Make sure you already set up the runtime requirements. To run test cases
 
@@ -58,17 +64,17 @@ Run the tests
 
     `pytest`
 
-## Implementation
+### Implementation
 
-### Overview
+#### Overview
 
 This implements a fictive "zookeeper service". It consists of a configurable list of animals with arbitrary "status" compiled from a list of - also configurable - words (see zookeeper.conf).
 
-The purpose is to simulate an asynchronuous (aka non-blocking) workload. Animals can be listed - which returns information about available animals - and queried - which returns an approximation of their current status. Note that any query will result in a discrete status, even when invoked for the same animal multiple times.
+The purpose is to simulate an asynchronuous (aka non-blocking) processing of a workload. Animals can be listed - which returns information about available animals - and queried - which returns an approximation of their current status. Note that any query will result in a discrete status, even when invoked for the same animal multiple times.
 
-### Usage
+#### Usage
 
-The "REST API" implements the following endpoints
+The "API" implements the following endpoints
 
 `/animals`
 
@@ -76,13 +82,13 @@ The "REST API" implements the following endpoints
 
 `/animals/<animal_name>`
 
-Start a new and asynchronous query about the animals status. The endpoint will immediately return a UUID which can be used for querying the state of the computation. The "workload" will (deterministically) take 10-20 seconds to complete. A separate thread will be spawned for every invocation of this endpoint, regardless of animal.
+Start a new and asynchronous query about the animals status. The endpoint will immediately return a UUID which can be used for querying the state of the computation. The "workload" will (deterministically) take 10-20 seconds to complete. A separate thread will be spawned for every invocation of this endpoint, regardless of animal. That is, the endpoint is intentionally *not* idempotent. However, the query is.
 
 `/query/<uuid>`
 
 If the "computation" is still in progress then the query will return "..." as the status. As soon as the computation is complete, the animals status will be shown instead.
 
-## Simplifications
+### Simplifications
 
 For the sake of brevity, the implementation makes several simplifications which would probably be considered indispensable for a real world application:
 
