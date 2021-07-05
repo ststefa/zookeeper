@@ -1,5 +1,18 @@
 # Flask Service
 
+<!-- TOC depthfrom:2 depthto:3 -->
+
+- [Aufgabe](#aufgabe)
+- [Rahmenbedingungen](#rahmenbedingungen)
+- [Installation](#installation)
+- [Tests](#tests)
+- [Implementation](#implementation)
+  - [Overview](#overview)
+  - [Usage](#usage)
+- [Simplification](#simplification)
+
+<!-- /TOC -->
+
 ## Aufgabe
 
 Erläutern Sie die Erstellung eines non-blocking Flask Services. Hierbei können alle Tools und libraries der GNU/Linux oder Python Welt benutzt werden. Beachten Sie bitte auch Sicherheitsaspekte.
@@ -18,7 +31,7 @@ Zur Abnahme sollte eine kurze Erklärung der eingesetzten Tools, die oberflächl
 
 Genauso wichtig wie das lauffähige Programm ist die Dokumentation (readme und code comments) der Lösungsidee und der einzelnen Programmteile und Tests. Das Hauptziel ist es, dass wir erleben, wie Sie Software in einem professionellen Umfeld entwickeln. Die gesamte Bearbeitungsdauer sollte max. 1-2 Stunden sein.
 
-## Install
+## Installation
 
 - (recommended) Create a python virtual environment for better separation:
 
@@ -43,9 +56,33 @@ Make sure you already set up the runtime requirements. To run test cases
 
 Run the tests
 
-    `pytest -v`
+    `pytest`
 
-## Simplification
+## Implementation
+
+### Overview
+
+This implements a fictive "zookeeper service". It consists of a configurable list of animals with arbitrary "status" compiled from a list of - also configurable - words (see zookeeper.conf).
+
+The purpose is to simulate an asynchronuous (aka non-blocking) workload. Animals can be listed - which returns information about available animals - and queried - which returns an approximation of their current status. Note that any query will result in a discrete status, even when invoked for the same animal multiple times.
+
+### Usage
+
+The "REST API" implements the following endpoints
+
+`/animals`
+
+  Return a list of available animals in the "zoo".
+
+`/animals/<animal_name>`
+
+Start a new and asynchronous query about the animals status. The endpoint will immediately return a UUID which can be used for querying the state of the computation. The "workload" will (deterministically) take 10-20 seconds to complete. A separate thread will be spawned for every invocation of this endpoint, regardless of animal.
+
+`/query/<uuid>`
+
+If the "computation" is still in progress then the query will return "..." as the status. As soon as the computation is complete, the animals status will be shown instead.
+
+## Simplifications
 
 For the sake of brevity, the implementation makes several simplifications which would probably be considered indispensable for a real world application:
 

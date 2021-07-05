@@ -16,11 +16,13 @@ import zookeeperd
 @pytest.fixture #(scope='module')
 def testling():
     testling = zookeeperd.app
+    testling.run()
     return testling
 
 def language_test():
     for item in ["animals", "verbs", "adjectives", "adverbs"]:
         assert item in zookeeperd.language.keys()
+
 
 def config_test():
     zookeeperd.read_config()
@@ -28,9 +30,6 @@ def config_test():
         assert len(zookeeperd.language[item]) > 5
 
 
-
-def request_testa(testling):
-    ### test plain invocation ###
-    #assert tuple._overlaps((1, 1), (1, 1)) == True
-    res = requests.get('https://localhost:5000')
+def request_test(testling):
+    res = requests.get('http://localhost:5000/animals')
     print(res)
