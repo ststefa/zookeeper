@@ -21,7 +21,7 @@ app = Flask(__name__)
 
 # Where we keep our threads. A real world implementation would probably use a
 # more sophisticated approach
-threads = Dict[uuid.UUID, threading.Thread]
+threads = {}
 
 language = {
     'animals': [],
@@ -29,6 +29,10 @@ language = {
     'adjectives': [],
     'adverbs': [],
 }
+
+
+def ZooException(Exception):
+    pass
 
 
 def read_config():
@@ -40,16 +44,17 @@ def read_config():
     logger.info(f'language: {language}')
 
 
-def worker():
-    print('start')
+def worker(id: uuid.UUID, animal: str):
+    logger.debug('thread start')
     time.sleep(random.randrange(10, 20))
-    print('end')
+    threads[id] = animal
+    logger.debug('thread end')
     return
 
 
 def add_thread(animal) -> uuid.UUID:
-    t = threading.Thread(target=worker)
     new_uuid = uuid.UUID()
+    t = threading.Thread(target=worker, args=(new_uuid, animal))
     threads[new_uuid] = t
     t.start()
     return new_uuid
@@ -63,10 +68,10 @@ def ping():
 
 @app.route('/lookup/<string:animal>')
 def lookup(animal):
-    if animal in language.animals:
+    if animal in language['animals']:
         id = add_thread(animal)
     else:
-        raise
+        raise ZooException(f'No such animal: {animal}')
 
 
 @app.route('/query/<uuid:id>')
