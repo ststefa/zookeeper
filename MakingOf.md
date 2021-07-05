@@ -17,3 +17,5 @@ Ich denke mir ein Problem aus: Es soll einen "Zoo Webservice" geben. Als Argumen
 Dann schaue ich gleich mal nach Testbarkeit und entdecke direkt `pytest-flask`. Keine große Überraschung, Flask ist ja auch recht verbreitet.
 
 Ein einfaches "Gerüst" für das Projekt habe ich schon angelegt, und zur Entwicklung werde ich VScode verwenden, weil es so schön praktisch ist (Respekt Microsoft, obwohl ich euch misstraue ;) ).
+
+Nebenher lasse ich ein Script mitlaufen, welches alle 30 Minuten den aktuellemn Stand committed. Vielleicht kann man ja daraus ein bisschen den zeitlichen Verlauf meiner Herangehensweise sehen.
