@@ -1,14 +1,17 @@
 # Flask Service
 
-<!-- TOC depthfrom:2 depthto:3 -->
+<!-- TOC depthfrom:2 depthto:4 -->
 
-- [Aufgabe](#aufgabe)
+- [Aufgabse](#aufgabse)
 - [Rahmenbedingungen](#rahmenbedingungen)
 - [Notes](#notes)
 - [Solution](#solution)
   - [Installation](#installation)
   - [Tests](#tests)
   - [Implementation](#implementation)
+    - [Overview](#overview)
+    - [Usage](#usage)
+    - [Example](#example)
   - [Simplifications](#simplifications)
 
 <!-- /TOC -->
@@ -95,6 +98,32 @@ Start a new and asynchronous query about the animals status. The endpoint will i
 `/query/<uuid>`
 
 If the "computation" is still in progress then the query will return "..." as the status. As soon as the computation is complete, the animals status will be shown instead.
+
+#### Example
+
+This shows an example use of the zookeeper service. Some output has been omitted for clarity.
+
+```bash
+$ ./zookeeperd.py &
+[1] 76104
+
+$ zkc() { curl http://localhost:5000${1} ; }
+
+$ zkc /animals
+["aardvarks","alpacas","bisons","crocodiles","elks","gorillas","hippos","koalas","kangaroos","lions","pandas","tigers","unicorns","zebras"]
+
+$ zkc /animals/hippos
+"424d60a6-f21a-4089-b828-23d123a62565"
+
+$ zkc /query/424d60a6-f21a-4089-b828-23d123a62565
+"..."
+
+$ zkc /query/424d60a6-f21a-4089-b828-23d123a62565
+"..."
+
+$ zkc /query/424d60a6-f21a-4089-b828-23d123a62565
+"Sleepy hippos eat wildly"
+```
 
 ### Simplifications
 
