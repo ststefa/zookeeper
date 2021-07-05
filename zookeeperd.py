@@ -11,6 +11,8 @@ from typing import Dict
 
 from flask import Flask, escape, request
 
+from werkzeug.exceptions import HTTPException
+
 import logging
 # Simplistic logging
 logging.basicConfig()
@@ -44,6 +46,11 @@ def read_config():
     logger.info(f'language: {language}')
 
 
+def error(message: str):
+    logger.error(message)
+    return message
+
+
 def worker(id: uuid.UUID, animal: str):
     logger.debug('thread start')
     time.sleep(random.randrange(10, 20))
@@ -60,9 +67,17 @@ def add_thread(animal) -> uuid.UUID:
     return new_uuid
 
 
+@app.errorhandler(Exception)
+def handle_exception(e):
+    if isinstance(e, HTTPException):
+        return e
+    else:
+        return str(e), 500
+
+
 @app.route("/ping")
 def ping():
-    name = request.args.get("name", "World")
+    name = request.args.get("name", "you")
     return f"pong {escape(name)}"
 
 
@@ -70,8 +85,9 @@ def ping():
 def lookup(animal):
     if animal in language['animals']:
         id = add_thread(animal)
+        return id
     else:
-        return f'No such animal: {animal}', 400
+        return error(f'No such animal: {animal}')
 
 
 @app.route('/list')
@@ -81,11 +97,13 @@ def list_threads():
 
 @app.route('/query/<uuid:id>')
 def show_thread_state(id):
-    return f'id {id}'
+    if id not in threads.keys():
+        return error(f'No such thread: {id}')
+    if isinstance(threads[id], threading.Thread):
+        return '...'
+    else:
+        return threads[id]
 
-@app.errorhandler(404)
-def not_found(error):
-    return render_template('error.html'), 404
 
 if __name__ == "__main__":
     read_config()
