@@ -5,6 +5,7 @@ import configparser
 import threading
 import uuid
 import time
+import json
 import random
 
 import flask
@@ -12,11 +13,11 @@ from werkzeug.exceptions import HTTPException
 
 # Simplistic logging
 import logging
+
 logging.getLogger().setLevel(logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 app = flask.Flask(__name__)
-
 
 # Where we keep our threads. A real world implementation would probably use a
 # more sophisticated approach
@@ -35,7 +36,7 @@ class ZookeeperException(HTTPException):
     """ Generic base exception class for zoo-related problems. It inherits
         from HTTPException to allow for simplified flask "over-HTTP" handling
     """
-    pass
+    code = 500
 
 
 def read_config():
@@ -86,20 +87,24 @@ def add_thread(animal) -> uuid.UUID:
     return new_uuid
 
 
-@app.errorhandler(ZookeeperException)
+@app.errorhandler(HTTPException)
 def handle_exception(e):
-    """ Allows the use of regular exceptions in the code by writing it to this
-        process' log as well as returning it as a HTTP response
-    """
-    logger.exception(e)
-    return str(e), 500
+    """Return JSON instead of HTML for HTTP errors."""
+    response = e.get_response()
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    response.content_type = "application/json"
+    return response
 
 
 @app.route('/animals')
 def get_animals():
     """ Get a list of animals in the zoo. Any animal can be queried
     """
-    return flask.jsonify(language['animals'])
+    return json.dumps(language['animals'])
 
 
 @app.route('/animals/<string:animal>')
@@ -108,7 +113,7 @@ def query_status(animal):
     """
     if animal in language['animals']:
         id = add_thread(animal)
-        return flask.jsonify(str(id))
+        return json.dumps(str(id))
     else:
         raise ZookeeperException(f'No such animal: {animal}')
 
@@ -121,9 +126,9 @@ def show_thread_state(id):
     if id not in threads.keys():
         raise ZookeeperException(f'No query with id {id}')
     if isinstance(threads[id], threading.Thread):
-        return flask.jsonify('...')
+        return json.dumps('...')
     else:
-        return flask.jsonify(threads[id])
+        return json.dumps(threads[id])
 
 
 if __name__ == "__main__":
