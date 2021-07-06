@@ -89,6 +89,10 @@ def add_thread(animal) -> uuid.UUID:
 
 @app.errorhandler(HTTPException)
 def handle_exception(e):
+    """ Allows the use of regular exceptions in the code by writing it to this
+        process' log as well as returning it as a HTTP response
+    """
+    logger.exception(e)
     """Return JSON instead of HTML for HTTP errors."""
     response = e.get_response()
     response.data = json.dumps({
