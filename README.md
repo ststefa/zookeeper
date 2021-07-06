@@ -147,10 +147,6 @@ For the sake of brevity, the implementation makes several simplifications which 
   - Some kind of clever additional flask annotations (very likely such exists already)
   - Outsourcing the topic entirely to the embedding system, e.g. the invoking webserver which would act as a reverse proxy
 
-- JSON structures would be used for HTTP responses consequently.
-
 - Timing information would be added in several places.
 
 - The wording of the implemented "REST API" did not receive much consideration time. I would usually consider this wording an important subject to spend a lot of time and discussion on with the goal to make it intuitive to use.
-
-- Proper HTTP response code handling is not implemented
