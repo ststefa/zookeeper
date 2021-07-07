@@ -12,10 +12,9 @@ import flask
 from werkzeug.exceptions import HTTPException
 
 # Simplistic logging
-import logging
-
-logging.getLogger().setLevel(logging.DEBUG)
-logger = logging.getLogger(__name__)
+#import logging
+#logging.getLogger().setLevel(logging.DEBUG)
+#logger = logging.getLogger(__name__)
 
 app = flask.Flask(__name__)
 
@@ -50,7 +49,7 @@ def read_config():
     for block in language.keys():
         for (key, val) in config.items(block):
             language[block].append(key)
-    logger.info(f'language: {language}')
+    app.logger.info(f'language: {language}')
 
 
 def build_status(animal) -> str:
@@ -68,10 +67,10 @@ def worker(id: uuid.UUID, animal: str):
         and then assigns the animals status as the threads value. This
         also eliminates the reference to the thread
     """
-    logger.debug('thread start')
+    app.logger.debug('thread start')
     time.sleep(random.randrange(10, 20))
     threads[id] = build_status(animal)
-    logger.debug('thread end')
+    app.logger.debug('thread end')
     return
 
 
@@ -92,7 +91,7 @@ def handle_exception(e):
     """ Allows the use of regular exceptions in the code by writing it to this
         process' log as well as returning it as a HTTP response
     """
-    logger.exception(e)
+    app.logger.exception(e)
     """Return JSON instead of HTML for HTTP errors."""
     response = e.get_response()
     response.data = json.dumps({
