@@ -1,20 +1,14 @@
 #!/usr/bin/env python3
 
 import configparser
-
-import threading
-import uuid
-import time
 import json
 import random
+import threading
+import time
+import uuid
 
 import flask
 from werkzeug.exceptions import HTTPException
-
-# Simplistic logging
-#import logging
-#logging.getLogger().setLevel(logging.DEBUG)
-#logger = logging.getLogger(__name__)
 
 app = flask.Flask(__name__)
 
@@ -111,7 +105,7 @@ def get_animals():
 
 
 @app.route('/animals/<string:animal>')
-def query_status(animal):
+def start_query(animal):
     """ Start a status query for an animal
     """
     if animal in language['animals']:
@@ -122,14 +116,15 @@ def query_status(animal):
 
 
 @app.route('/query/<uuid:id>')
-def show_thread_state(id):
+def query_result(id):
     """ Show the current result of the query. An ongoing query is reflected
-        by "..."
+        by "...". An ongoing query is also sent with a HTTP 202 code to signal
+        incompleteness to the caller
     """
     if id not in threads.keys():
         raise ZookeeperException(f'No query with id {id}')
     if isinstance(threads[id], threading.Thread):
-        return json.dumps('...')
+        return json.dumps('...'), 202
     else:
         return json.dumps(threads[id])
 
