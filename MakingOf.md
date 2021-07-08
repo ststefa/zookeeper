@@ -23,3 +23,5 @@ Nebenher lasse ich ein Script mitlaufen, welches alle 30 Minuten den aktuellen S
 Meine insgesamte Bearbeitungszeit würde ich (nach Abzug großzügiger Pausen, ich habe ja Urlaub ;) ) auf 3-4 Stunden schätzen.
 
 Umfangreiche - und in einem echten Projekt unverzichtbare - `pytest-flask` Tests habe ich aus Zeitgründen vernachlässigt, da seine Verwendung sich mir nicht unmittelbar erschlossen hat.
+
+Nachtrag: Ich habe heute (2021-07-08) aus reinem Selbstinteresse und als Notiz für mein zukünftiges Ich noch einige `pytest-flask` Tests ergänzt. Flask scheint mir ein sehr gutes Konzept zu sein, welches mir in Zukunft sicher wieder begegnen wird.
